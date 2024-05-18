@@ -2,22 +2,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from src.common import NDArrayFloat
-from qr import get_eigenvalues_via_qr
+from practicum_7.qr import get_eigenvalues_via_qr
+
 
 def get_arnoldi_vectors(A: NDArrayFloat, n_iters: int) -> NDArrayFloat:
-    n = len(A[0])
-    Q = np.zeros((n,n_iters))
-    v_k = np.random.rand (n)
+    n = A.shape[0]
+    Q = np.zeros((n, n_iters))
+    v_k = np.random.rand(n)
     u_k = v_k / np.linalg.norm(v_k)
-    Q[: , 0] = u_k
-    for k in range(1,n_iters):
-        u_k = Q[: , k-1]
-        v_kk = A @ Q[: , k-1]
+    Q[:, 0] = u_k
+    for k in range(1, n_iters):
+        u_k = Q[:, k - 1]
+        v_kk = A @ Q[:, k - 1]
         for j in range(k):
             u_j = Q[:, j]
             h_jk = np.dot(v_kk, u_j)
             v_kk -= h_jk * u_j
-        Q[: , k] = v_kk / np.linalg.norm(v_kk)
+        Q[:, k] = v_kk / np.linalg.norm(v_kk)
     return Q
 
 
@@ -32,12 +33,8 @@ if __name__ == "__main__":
     )
 
     Q = get_arnoldi_vectors(A, n_iters=3)
-    print(Q)
-    lambd = Q[: , 0] @ Q[:,1]
-    print(lambd) # показали что ортонормированы
-    
-    lambdas = get_eigenvalues_via_qr(Q,10)
-    print(lambdas)
+    eigvals = get_eigenvalues_via_qr(Q.T @ A @ Q, n_iters=10)
+    print()
     ##########################
     ### PUT YOUR CODE HERE ###
     ##########################
